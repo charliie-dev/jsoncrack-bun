@@ -10,6 +10,8 @@ RUN bun install --frozen-lockfile
 
 # Stage 2: Build the application
 FROM base AS builder
+ARG SITE_URL=https://jsoncrack.com
+ENV SITE_URL=$SITE_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/www/node_modules ./apps/www/node_modules
 COPY --from=deps /app/packages/jsoncrack-react/node_modules ./packages/jsoncrack-react/node_modules

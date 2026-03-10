@@ -13,7 +13,7 @@ Summary of all uncommitted changes made to migrate JSON Crack from pnpm + Turbor
 
 ## Tooling
 
-- **Added `mise.toml`** — declares `bun = "latest"` and provides task shortcuts (`dev`, `build`, `lint`, `lint:fix`, `start`, `clean`, `install`, `dc:*`)
+- **Added `mise.toml`** — declares `bun = "latest"` and provides task shortcuts (`dev`, `build`, `lint`, `lint:fix`, `start`, `clean`, `install`); Docker tasks split into `dc:*` (pre-built image via root `compose.yml`) and `dc:build:*` (source builds via `apps/www/compose.yml`)
 - **Deleted `.vscode/launch.json` and `.vscode/tasks.json`** — removed IDE-specific config from the repo
 
 ## VSCode Extension (removed)
@@ -36,7 +36,7 @@ Summary of all uncommitted changes made to migrate JSON Crack from pnpm + Turbor
 
 ## Docker
 
-- **`apps/www/Dockerfile`** — rewrote as multi-stage build using `oven/bun:1-alpine` base; installs deps with `bun install --frozen-lockfile`; builds with `bun run build`; serves static export via `nginxinc/nginx-unprivileged:1-alpine`
+- **`apps/www/Dockerfile`** — rewrote as multi-stage build using `oven/bun:1-alpine` base; installs deps with `bun install --frozen-lockfile`; builds with `bun run build`; serves static export via `nginxinc/nginx-unprivileged:1-alpine`; accepts `SITE_URL` build arg for sitemap customization
 - **`apps/www/compose.yml`** (new, replaces `docker-compose.yml`) — builds from source with security hardening (read-only root, `cap_drop: ALL`, `no-new-privileges`, tmpfs mounts, log rotation, `wget` healthcheck)
 - **Root `compose.yml`** (new) — pulls the pre-built image `ghcr.io/charliie-dev/jsoncrack-bun:v4.0.1` for quick deployment without local builds; same security hardening as the dev compose file
 - **`.dockerignore`** (root, new) — excludes build artifacts, `.git`, agent tooling, docs, and CI files from the Docker build context
@@ -45,12 +45,14 @@ Summary of all uncommitted changes made to migrate JSON Crack from pnpm + Turbor
 ## Environment & Config
 
 - **`apps/www/.env`** — updated `NEXT_PUBLIC_NODE_LIMIT` from `800` to `10000`, added `NEXT_PUBLIC_DISABLE_EXTERNAL_MODE=true`
-- **`apps/www/.env.example`** (new) — documents all available environment variables with defaults and descriptions
+- **`apps/www/.env.example`** (new) — documents all available environment variables with defaults and descriptions, including `SITE_URL`
 - **`apps/www/.env.development`** — aligned with `.env`
+- **`apps/www/next-sitemap.config.js`** — `siteUrl` now reads from `SITE_URL` env var (defaults to `https://jsoncrack.com`)
 - **`apps/www/next.config.js`** — added `turbopack.resolveAlias` for `fs` shim alongside existing webpack fallback
 - **`.gitignore`** — added entries for agent tooling (`.agents`, `.claude`, `.codex`), cleaned up workspace-level patterns
 - **`CONTRIBUTING.md`** — updated prerequisites and setup instructions from pnpm to Bun
+- **Build-time vs runtime** — all `NEXT_PUBLIC_*` and `SITE_URL` variables are baked in at build time (static export); only `PORT` is a runtime variable (used by Docker Compose)
 
 ## Documentation
 
-- **`README.md`** — rewrote Getting Started section for Bun and mise; added mise task reference table; added environment variable documentation; Docker section now covers both pre-built image (recommended) and local build workflows
+- **`README.md`** — rewrote Getting Started section for Bun and mise; added mise task reference table with `dc:*`/`dc:build:*` split; added environment variable documentation (including `SITE_URL`); Docker section covers both pre-built image (recommended) and local build workflows; added note clarifying build-time vs runtime variables

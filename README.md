@@ -129,11 +129,13 @@ This project includes [mise](https://mise.jdx.dev/) tasks as shortcuts for commo
 | `mise run start` | Start production server |
 | `mise run clean` | Clean build outputs |
 | `mise run dc:validate` | Validate compose config |
-| `mise run dc:up` | Start all services |
-| `mise run dc:rec` | Recreate all containers |
+| `mise run dc:up` | Start services (pre-built image) |
 | `mise run dc:down` | Stop and remove containers |
 | `mise run dc:status` | Show container status |
 | `mise run dc:logs` | Tail container logs |
+| `mise run dc:build:up` | Build from source and start |
+| `mise run dc:build:rec` | Rebuild from source and recreate |
+| `mise run dc:build:down` | Stop source-built containers |
 | `mise run dc:prune` | Nuclear cleanup: containers, images |
 
 ### Environment Variables
@@ -150,7 +152,8 @@ cp apps/www/.env.example apps/www/.env
 | `NEXT_TELEMETRY_DISABLED` | `1` | Disable Next.js telemetry |
 | `NEXT_PUBLIC_DISABLE_EXTERNAL_MODE` | `true` | Disable the external mode dialog |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | _(empty)_ | Google Analytics measurement ID (optional) |
-| `PORT` | `8080` | Host port for Docker Compose |
+| `SITE_URL` | `https://jsoncrack.com` | Base URL for sitemap generation (build-time only) |
+| `PORT` | `8080` | Host port for Docker Compose (runtime) |
 
 ### Docker
 
@@ -179,10 +182,18 @@ To build from source, use the compose file in `apps/www/`:
 cp apps/www/.env.example apps/www/.env
 
 # Build and start
-mise run dc:up    # or: docker compose -f apps/www/compose.yml up -d --build
+mise run dc:build:up    # or: docker compose -f apps/www/compose.yml up -d --build
 
 # The editor is available at http://localhost:8080
 ```
+
+To customize the sitemap URL when building:
+
+```sh
+SITE_URL=https://mysite.com mise run dc:build:up
+```
+
+> **Note:** All `NEXT_PUBLIC_*` and `SITE_URL` variables are baked in at build time (static export). They have no effect at container runtime — only `PORT` is a runtime variable.
 
 <!-- LICENSE -->
 
