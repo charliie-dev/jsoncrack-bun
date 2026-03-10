@@ -11,41 +11,26 @@
     "url": "https://github.com/AykutSarac/jsoncrack.com/issues"
   },
   "scripts": {
-    "dev": "turbo run dev",
-    "dev:www": "turbo run dev --filter=www",
-    "dev:vscode": "turbo run watch-build --filter=vscode",
-    "build": "turbo run build",
-    "build:www": "turbo run build --filter=www",
-    "build:vscode": "turbo run build --filter=vscode",
-    "start": "turbo run start",
-    "lint": "turbo run lint",
-    "lint:vscode": "turbo run lint --filter=vscode",
-    "lint:fix": "turbo run lint:fix",
-    "lint:fix:vscode": "turbo run lint:fix --filter=vscode",
-    "analyze": "turbo run analyze",
-    "clean": "turbo run clean"
+    "dev": "bun run --filter jsoncrack-react build && bun run --filter www dev",
+    "build": "bun run --filter jsoncrack-react build && bun run --filter www build",
+    "start": "bun run --filter www start",
+    "lint": "bun run --filter jsoncrack-react build && (bun run --filter jsoncrack-react lint & bun run --filter www lint & wait)",
+    "lint:fix": "bun run --filter jsoncrack-react lint:fix & bun run --filter www lint:fix & wait",
+    "analyze": "bun run --filter jsoncrack-react build && ANALYZE=true bun run --filter www build",
+    "clean": "bun run --filter '*' clean"
   },
-  "devDependencies": {
-    "turbo": "^2.8.8"
-  },
+  "workspaces": ["apps/*", "packages/*"],
+  "packageManager": "bun@1.3.10",
   "engines": {
-    "node": ">=24",
-    "pnpm": ">=10"
+    "bun": ">=1.2"
   },
-  "packageManager": "pnpm@10.20.0",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "sharp",
-      "unrs-resolver"
-    ],
-    "overrides": {
-      "react": "19.2.4",
-      "react-dom": "19.2.4",
-      "@types/react": "19.2.11",
-      "@types/react-dom": "19.2.3",
-      "html-to-image": "1.11.11",
-      "jq-web": "0.5.1"
-    }
+  "overrides": {
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "@types/react": "19.2.11",
+    "@types/react-dom": "19.2.3",
+    "html-to-image": "1.11.11",
+    "jq-web": "0.5.1",
+    "dompurify": "3.3.2"
   }
 }

@@ -1,0 +1,63 @@
+[tools]
+bun = "latest"
+
+[tasks.dev]
+description = "Start development server"
+run = "bun run dev"
+
+[tasks.build]
+description = "Build all packages"
+run = "bun run build"
+
+[tasks.lint]
+description = "Run linting"
+run = "bun run lint"
+
+[tasks."lint:fix"]
+description = "Fix lint issues"
+run = "bun run lint:fix"
+
+[tasks.start]
+description = "Start production server"
+run = "bun run start"
+
+[tasks.clean]
+description = "Clean build outputs"
+run = "bun run clean"
+
+[tasks.install]
+description = "Install dependencies"
+run = "bun install"
+
+[tasks."dc:validate"]
+description = "Validate compose config"
+run = "docker compose -f apps/www/compose.yml config --quiet && echo 'Compose config OK'"
+
+[tasks."dc:up"]
+description = "Start all services"
+run = "docker compose -f apps/www/compose.yml up -d"
+
+[tasks."dc:rec"]
+description = "Recreate all containers"
+run = "docker compose -f apps/www/compose.yml up -d --force-recreate --remove-orphans"
+
+[tasks."dc:down"]
+description = "Stop and remove containers"
+run = "docker compose -f apps/www/compose.yml down --remove-orphans"
+
+[tasks."dc:status"]
+description = "Show container status"
+run = 'docker compose -f apps/www/compose.yml ps --format "table {{.Name}}\t{{.Status}}"'
+
+[tasks."dc:logs"]
+description = "Tail container logs"
+run = "docker compose -f apps/www/compose.yml logs -f"
+
+[tasks."dc:prune"]
+description = "Nuclear cleanup: containers, images, generated files"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+docker compose -f apps/www/compose.yml down --remove-orphans 2>/dev/null || true
+docker compose -f apps/www/compose.yml down --rmi all 2>/dev/null || true
+'''

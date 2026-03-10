@@ -20,7 +20,7 @@
     "@mantine/hooks": "^8.3.14",
     "@monaco-editor/react": "^4.7.0",
     "allotment": "^1.20.5",
-    "fast-xml-parser": "5.3.4",
+    "fast-xml-parser": "5.4.2",
     "gofmt.js": "0.0.2",
     "html-to-image": "1.11.11",
     "jq-web": "0.5.1",
@@ -67,6 +67,5 @@
     "prettier": "^3.8.1",
     "ts-node": "^10.9.2",
     "typescript": "5.9.3"
-  },
-  "packageManager": "pnpm@10.20.0"
+  }
 }
