@@ -22,14 +22,6 @@ export const Footer = () => {
               Product
             </Text>
             <Anchor
-              fz="sm"
-              c="gray.5"
-              href="https://marketplace.visualstudio.com/items?itemName=AykutSarac.jsoncrack-vscode"
-              rel="noopener"
-            >
-              VS Code
-            </Anchor>
-            <Anchor
               href="https://github.com/AykutSarac/jsoncrack.com"
               fz="sm"
               c="gray.5"
@@ -51,9 +43,6 @@ export const Footer = () => {
             <Text fz="sm" c="white">
               Resources
             </Text>
-            <Anchor component={Link} prefetch={false} fz="sm" c="gray.5" href="/#faq">
-              FAQ
-            </Anchor>
             <Anchor component={Link} prefetch={false} fz="sm" c="gray.5" href="/docs">
               Docs
             </Anchor>

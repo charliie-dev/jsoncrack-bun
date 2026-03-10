@@ -68,18 +68,6 @@ export const Navbar = () => {
         </Left>
         <Center>
           <Button
-            component="a"
-            href="https://marketplace.visualstudio.com/items?itemName=AykutSarac.jsoncrack-vscode"
-            target="_blank"
-            variant="subtle"
-            color="black"
-            size="md"
-            radius="md"
-            rel="noopener"
-          >
-            VS Code
-          </Button>
-          <Button
             component={Link}
             prefetch={false}
             href="/docs"
