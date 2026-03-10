@@ -1,23 +1,23 @@
-FROM node:24.10.0-alpine AS base
-RUN npm install -g pnpm@10.10.0
+FROM oven/bun:1-alpine AS base
+WORKDIR /app
 
 # Stage 1: Install dependencies
 FROM base AS deps
-WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable pnpm && pnpm install --frozen-lockfile
+COPY package.json bun.lock ./
+COPY apps/www/package.json ./apps/www/package.json
+COPY packages/jsoncrack-react/package.json ./packages/jsoncrack-react/package.json
+RUN bun install --frozen-lockfile
 
 # Stage 2: Build the application
 FROM base AS builder
-WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/www/node_modules ./apps/www/node_modules
+COPY --from=deps /app/packages/jsoncrack-react/node_modules ./packages/jsoncrack-react/node_modules
 COPY . .
-RUN corepack enable pnpm && pnpm run build
+RUN bun run build
 
 # Stage 3: Production image
-FROM nginxinc/nginx-unprivileged:stable AS production
-WORKDIR /app
-COPY --from=builder /app/out /app
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-
+FROM docker.io/nginxinc/nginx-unprivileged:1-alpine AS production
+COPY --from=builder --chown=nginx:nginx /app/apps/www/out /app
+COPY apps/www/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 8080

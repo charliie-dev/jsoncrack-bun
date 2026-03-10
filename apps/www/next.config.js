@@ -9,7 +9,7 @@ const config = {
   output: "export",
   transpilePackages: ["jsoncrack"],
   reactStrictMode: false,
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false,
   compiler: {
     styledComponents: true,
   },
