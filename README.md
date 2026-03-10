@@ -124,12 +124,14 @@ This project includes [mise](https://mise.jdx.dev/) tasks as shortcuts for commo
 | `mise run install` | Install dependencies |
 | `mise run dev` | Start development server |
 | `mise run build` | Build all packages |
+| `mise run analyze` | Build with bundle analyzer |
 | `mise run lint` | Run linting |
 | `mise run lint:fix` | Fix lint issues |
 | `mise run start` | Start production server |
 | `mise run clean` | Clean build outputs |
 | `mise run dc:validate` | Validate compose config |
 | `mise run dc:up` | Start services (pre-built image) |
+| `mise run dc:rec` | Recreate all containers |
 | `mise run dc:down` | Stop and remove containers |
 | `mise run dc:status` | Show container status |
 | `mise run dc:logs` | Tail container logs |
@@ -140,11 +142,23 @@ This project includes [mise](https://mise.jdx.dev/) tasks as shortcuts for commo
 
 ### Environment Variables
 
-Copy the example env file and adjust as needed:
+There are two `.env.example` files — one for Docker deployment and one for local development/building:
 
 ```sh
+# For Docker deployment (root compose.yml)
+cp .env.example .env
+
+# For local development / building from source
 cp apps/www/.env.example apps/www/.env
 ```
+
+#### Docker deployment (`.env.example`)
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PORT` | `8080` | Host port for Docker Compose (runtime) |
+
+#### Local development / source builds (`apps/www/.env.example`)
 
 | Variable | Default | Description |
 | --- | --- | --- |
@@ -162,12 +176,15 @@ cp apps/www/.env.example apps/www/.env
 The root `compose.yml` pulls the pre-built image from GHCR — no local build required:
 
 ```sh
-docker compose up -d
+# Copy env file (mise run dc:up does this automatically)
+cp .env.example .env
+
+docker compose up -d    # or: mise run dc:up
 
 # The editor is available at http://localhost:8080
 ```
 
-To run on a different port:
+To run on a different port, edit `.env` or override inline:
 
 ```sh
 PORT=3000 docker compose up -d

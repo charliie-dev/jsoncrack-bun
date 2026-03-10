@@ -39,6 +39,8 @@ Summary of all uncommitted changes made to migrate JSON Crack from pnpm + Turbor
 - **`apps/www/Dockerfile`** — rewrote as multi-stage build using `oven/bun:1-alpine` base; installs deps with `bun install --frozen-lockfile`; builds with `bun run build`; serves static export via `nginxinc/nginx-unprivileged:1-alpine`; accepts `SITE_URL` build arg for sitemap customization
 - **`apps/www/compose.yml`** (new, replaces `docker-compose.yml`) — builds from source with security hardening (read-only root, `cap_drop: ALL`, `no-new-privileges`, tmpfs mounts, log rotation, `wget` healthcheck)
 - **Root `compose.yml`** (new) — pulls the pre-built image `ghcr.io/charliie-dev/jsoncrack-bun:v4.0.1` for quick deployment without local builds; same security hardening as the dev compose file
+- **`apps/www/nginx.conf`** — added `listen [::]:8080;` for IPv6 support; prevents the nginx entrypoint script from attempting to modify the config on read-only filesystems
+- **Root `.env.example`** (new) — documents the `PORT` runtime variable for the root `compose.yml`
 - **`.dockerignore`** (root, new) — excludes build artifacts, `.git`, agent tooling, docs, and CI files from the Docker build context
 - **`apps/www/.dockerignore`** — expanded exclusions to match root `.dockerignore` (added `out/`, `*.md`, `.github/`, `.vscode/`, `.claude/`, `.agents/`, `.codex/`, `.turbo/`)
 
