@@ -2,57 +2,65 @@ name: Verify Pull Request
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  cache-and-install:
+  lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      - name: Install Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "24.10.0"
+      - name: Setup mise
+        uses: jdx/mise-action@v2
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          version: 10.20.0
-          run_install: false
-
-      - name: Get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - uses: actions/cache@v5
-        name: Setup pnpm cache
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Restore Turbo and Next.js cache
-        uses: actions/cache@v5
+      - name: Cache bun dependencies
+        uses: actions/cache@v4
         with:
           path: |
-            .turbo
-            apps/www/.next/cache
-          key: ${{ runner.os }}-turbo-next-${{ hashFiles('pnpm-lock.yaml', 'turbo.json') }}-${{ hashFiles('apps/www/**.[jt]s', 'apps/www/**.[jt]sx', 'packages/**.[jt]s', 'packages/**.[jt]sx') }}
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
           restore-keys: |
-            ${{ runner.os }}-turbo-next-${{ hashFiles('pnpm-lock.yaml', 'turbo.json') }}-
+            ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Lint
-        run: pnpm turbo run lint
+        run: bun run lint
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+
+      - name: Cache bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: apps/www/.next/cache
+          key: ${{ runner.os }}-next-${{ hashFiles('bun.lock') }}-${{ hashFiles('apps/www/**.[jt]s', 'apps/www/**.[jt]sx', 'packages/**.[jt]s', 'packages/**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-next-${{ hashFiles('bun.lock') }}-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
 
       - name: Build
-        run: pnpm turbo run build
-
-        
+        run: bun run build
