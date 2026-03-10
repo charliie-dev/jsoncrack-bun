@@ -1,0 +1,16 @@
+Dockerfile
+.dockerignore
+node_modules
+**/node_modules
+npm-debug.log
+.next
+**/.next
+.git
+.claude
+.agents
+.codex
+out
+**/out
+*.md
+.vscode
+.github

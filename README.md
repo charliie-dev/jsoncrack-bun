@@ -1,3 +1,12 @@
+> [!NOTE]
+> **This is a personal fork of [AykutSarac/jsoncrack.com](https://github.com/AykutSarac/jsoncrack.com) for personal use only.**
+> It serves as an experiment to migrate the project to [Bun](https://bun.sh/).
+> This fork is not intended for redistribution or production use beyond personal purposes.
+>
+> Huge thanks to [Aykut Saraç](https://github.com/AykutSarac) for creating and maintaining JSON Crack — a truly great piece of open-source software.
+>
+> The original project is licensed under the [Apache License 2.0](https://github.com/AykutSarac/jsoncrack.com/blob/main/LICENSE.md), Copyright 2025 Aykut Saraç.
+
 <!-- PROJECT LOGO -->
 <p align="center">
   <a href="https://github.com/AykutSarac/jsoncrack.com">
@@ -12,15 +21,12 @@
     <a href="https://jsoncrack.com"><strong>Learn more »</strong></a>
     <br />
     <br />
-    <a href="https://todiagram.com">ToDiagram</a>
-    ·
     <a href="https://discord.gg/yVyTtCRueq">Discord</a>
     ·
     <a href="https://jsoncrack.com">Website</a>
     ·
     <a href="https://github.com/AykutSarac/jsoncrack.com/issues">Issues</a>
     ·
-    <a href="https://marketplace.visualstudio.com/items?itemName=AykutSarac.jsoncrack-vscode">VS Code</a>
   </p>
 </p>
 
@@ -57,17 +63,12 @@ JSON Crack is a tool for visualizing JSON data in a structured, interactive grap
 
 ## Integrations
 
-- [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=AykutSarac.jsoncrack-vscode)
 - [npm Package (`jsoncrack-react`)](https://www.npmjs.com/package/jsoncrack-react)
 
 ## Contributing
 
 - Found a bug or missing feature? Open an issue on [GitHub Issues](https://github.com/AykutSarac/jsoncrack.com/issues).
 - Want to contribute code or docs? Start with our [contribution guide](./CONTRIBUTING.md).
-
-## Sponsors & Support
-
-If you find JSON Crack useful, you can support the project by using [ToDiagram](https://todiagram.com).
 
 ## Stay Up-to-Date
 
@@ -83,93 +84,105 @@ To get a local copy up and running, please follow these simple steps.
 
 ### Prerequisites
 
-Here is what you need to be able to run JSON Crack.
-
-- Node.js (Version: >=24.x)
-- pnpm (Version: >=10)
-
-
-## Development
+- [mise](https://mise.jdx.dev/) (recommended) — automatically installs the correct Bun version
+- Or [Bun](https://bun.sh/) >= 1.2 installed manually
 
 ### Setup
 
-1. Clone the repo into a public GitHub repository (or fork https://github.com/AykutSarac/jsoncrack.com/fork). If you plan to distribute the code, read the [`LICENSE`](/LICENSE.md) for additional details.
+1. Clone the repo (or fork https://github.com/AykutSarac/jsoncrack.com/fork):
 
    ```sh
    git clone https://github.com/AykutSarac/jsoncrack.com.git
-   ```
-
-2. Go to the project folder
-
-   ```sh
    cd jsoncrack.com
    ```
 
-3. Install packages
+2. Install tools and dependencies:
 
    ```sh
-   pnpm install
+   # If using mise (installs Bun automatically via mise.toml):
+   mise install
+   mise run install
+
+   # Or manually:
+   bun install
    ```
 
-4. Run the web app
+3. Run the development server:
 
    ```sh
-   pnpm dev:www
-
-   # Running on http://localhost:3000/
+   mise run dev    # or: bun run dev
    ```
 
-### Useful Commands
+   The editor will be available at `http://localhost:3000/`.
 
-From repository root:
+### Mise Tasks
+
+This project includes [mise](https://mise.jdx.dev/) tasks as shortcuts for common operations:
+
+| Command | Description |
+| --- | --- |
+| `mise run install` | Install dependencies |
+| `mise run dev` | Start development server |
+| `mise run build` | Build all packages |
+| `mise run lint` | Run linting |
+| `mise run lint:fix` | Fix lint issues |
+| `mise run start` | Start production server |
+| `mise run clean` | Clean build outputs |
+| `mise run dc:validate` | Validate compose config |
+| `mise run dc:up` | Start all services |
+| `mise run dc:rec` | Recreate all containers |
+| `mise run dc:down` | Stop and remove containers |
+| `mise run dc:status` | Show container status |
+| `mise run dc:logs` | Tail container logs |
+| `mise run dc:prune` | Nuclear cleanup: containers, images |
+
+### Environment Variables
+
+Copy the example env file and adjust as needed:
 
 ```sh
-# Web app
-pnpm dev:www
-pnpm build:www
-
-# VS Code extension
-pnpm dev:vscode
-pnpm build:vscode
-pnpm lint:vscode
-pnpm lint:fix:vscode
-
-# All workspaces
-pnpm dev
-pnpm build
-pnpm lint
+cp apps/www/.env.example apps/www/.env
 ```
 
-`pnpm build:www` is the production build command used in GitHub Actions deployment.
-
-### Debug VS Code Extension
-
-1. Open repository root in VS Code.
-2. Press `F5`.
-3. Select `Run VSCode Extension (apps/vscode)` when prompted.
-4. In the Extension Development Host window, open a `.json` file and run:
-   `JSON Crack: Enable JSON Crack visualization`.
+| Variable | Default | Description |
+| --- | --- | --- |
+| `NEXT_PUBLIC_NODE_LIMIT` | `10000` | Maximum number of nodes rendered in the graph |
+| `NEXT_TELEMETRY_DISABLED` | `1` | Disable Next.js telemetry |
+| `NEXT_PUBLIC_DISABLE_EXTERNAL_MODE` | `true` | Disable the external mode dialog |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | _(empty)_ | Google Analytics measurement ID (optional) |
+| `PORT` | `8080` | Host port for Docker Compose |
 
 ### Docker
 
-🐳 Docker assets are in `apps/www`.
-If you want to run JSON Crack locally:
+#### Using the pre-built image (recommended)
 
-```console
-cd apps/www
+The root `compose.yml` pulls the pre-built image from GHCR — no local build required:
 
-# Build a Docker image with:
-docker compose build
+```sh
+docker compose up -d
 
-# Run locally with `docker-compose`
-docker compose up
-
-# Go to http://localhost:8888
+# The editor is available at http://localhost:8080
 ```
 
-## Configuration
+To run on a different port:
 
-The supported node limit can be changed by editing `NEXT_PUBLIC_NODE_LIMIT` in `apps/www/.env`.
+```sh
+PORT=3000 docker compose up -d
+```
+
+#### Building locally
+
+To build from source, use the compose file in `apps/www/`:
+
+```sh
+# Copy and edit environment variables
+cp apps/www/.env.example apps/www/.env
+
+# Build and start
+mise run dc:up    # or: docker compose -f apps/www/compose.yml up -d --build
+
+# The editor is available at http://localhost:8080
+```
 
 <!-- LICENSE -->
 
